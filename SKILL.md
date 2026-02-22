@@ -17,6 +17,26 @@ description: >
 
 **Never reinvent the wheel.** Before implementing anything from scratch, always search for existing plugins, skills, MCP servers, and community resources that solve the problem or get you 80% of the way there. Someone has likely done something similar — find it, evaluate it, and build on it.
 
+## First-Run Setup
+
+On first activation, check if `~/.claude/skills/skill-scout/skill-scout.local.md` exists. If it does NOT exist:
+
+1. Tell the user: "Skill Scout needs a quick setup. Let me create your config."
+2. Ask the user how often they'd like the reference database refresh prompt (default: every 5 Skill Scout sessions).
+3. Create `~/.claude/skills/skill-scout/skill-scout.local.md` with their chosen interval:
+
+```markdown
+---
+refresh_interval: 5
+sessions_since_refresh: 0
+last_refresh: YYYY-MM-DD
+---
+```
+
+4. Confirm: "Skill Scout is configured. I'll prompt for a database refresh every [N] sessions."
+
+Then continue with the normal workflow.
+
 ## When This Skill Activates
 
 This skill should guide your behavior whenever you're about to:
@@ -174,19 +194,41 @@ claude plugin validate  # Validate plugin structure
 
 The local reference database (`references/`) is a curated snapshot — it needs periodic updates to stay useful.
 
-**When to prompt for a refresh:**
-- After ~5 sessions, or when starting a new project type the user hasn't worked on before
-- When a search against the local database yields no results for a common task
-- When the user asks about database freshness
+### Session Tracking
+
+Each time Skill Scout activates in a session, update the config file:
+
+1. Read `~/.claude/skills/skill-scout/skill-scout.local.md`
+2. Increment `sessions_since_refresh` by 1
+3. Write the updated value back to the file
+
+### When to Prompt for a Refresh
+
+Check the config file values. Prompt for a refresh when ANY of these are true:
+- `sessions_since_refresh` >= `refresh_interval`
+- The user is starting a new project type they haven't worked on before
+- A search against the local database yields no results for a common task
+- The user asks about database freshness
 
 **How to prompt:**
-> "The Skill Scout reference database was last updated on [date from the reference files]. Want me to run a web search to check for new plugins, skills, or MCP servers?"
+> "The Skill Scout reference database was last updated on [last_refresh date]. You've used Skill Scout [N] times since the last refresh (interval set to [refresh_interval]). Want me to run a web search to check for new plugins, skills, or MCP servers?"
 
-**When you discover new resources during a session:**
+### After a Refresh
+
+Update the config file:
+- Set `sessions_since_refresh` to `0`
+- Set `last_refresh` to today's date
+
+### When You Discover New Resources During a Session
+
 1. Tell the user: "I found [resource] — adding it to the Skill Scout reference database."
 2. Read the appropriate reference file from `references/`
 3. Add the new entry in the existing table format
 4. Update the `> Last updated:` date at the top of the file
+
+### Changing the Refresh Interval
+
+If the user asks to change how often the refresh prompt appears, update the `refresh_interval` value in `~/.claude/skills/skill-scout/skill-scout.local.md`.
 
 For the full refresh workflow (search queries, formatting rules, where to add entries), see `references/refresh-protocol.md`.
 
