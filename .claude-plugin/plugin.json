@@ -1,9 +1,0 @@
-{
-  "name": "skill-scout",
-  "version": "1.0.0",
-  "description": "Enforces a search-before-building philosophy. Automatically searches for existing plugins, skills, MCP servers, and community resources before implementing anything from scratch.",
-  "author": {
-    "name": "mc"
-  },
-  "keywords": ["discovery", "plugins", "skills", "mcp", "marketplace", "search", "efficiency"]
-}
