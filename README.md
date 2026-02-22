@@ -1,6 +1,6 @@
 # Skill Scout
 
-A Claude Code plugin that enforces a **"search before you build"** philosophy. Before implementing anything from scratch, Skill Scout checks a curated local database of plugins, skills, MCP servers, and community resources — then falls back to web searches only when needed.
+A Claude Code skill that enforces a **"search before you build"** philosophy. Before implementing anything from scratch, Skill Scout checks a curated local database of plugins, skills, MCP servers, and community resources — then falls back to web searches only when needed.
 
 ## Why
 
@@ -38,20 +38,13 @@ Skill Scout includes a refresh protocol — after roughly every 5 sessions or wh
 
 ## Install
 
-Add this repo as a marketplace source, then install:
+Clone into your Claude Code skills directory:
 
 ```bash
-claude plugin marketplace add michaelcarwile/claude-skill-skill-scout
-claude plugin install skill-scout@claude-skill-skill-scout
+git clone https://github.com/michaelcarwile/claude-skill-skill-scout.git ~/.claude/skills/skill-scout
 ```
 
-Or clone locally and add as a local marketplace:
-
-```bash
-git clone https://github.com/michaelcarwile/claude-skill-skill-scout.git
-claude plugin marketplace add ./claude-skill-skill-scout
-claude plugin install skill-scout@claude-skill-skill-scout
-```
+That's it — Claude Code automatically picks up skills from `~/.claude/skills/`.
 
 ## License
 
