@@ -22,18 +22,21 @@ description: >
 On first activation, check if `~/.claude/skills/skill-scout/skill-scout.local.md` exists. If it does NOT exist:
 
 1. Tell the user: "Skill Scout needs a quick setup. Let me create your config."
-2. Ask the user how often they'd like the reference database refresh prompt (default: every 5 Skill Scout sessions).
-3. Create `~/.claude/skills/skill-scout/skill-scout.local.md` with their chosen interval:
+2. Ask the user two questions:
+   - How many Skill Scout sessions between refresh prompts? (default: 5)
+   - How many days between refresh prompts? (default: 7)
+3. Create `~/.claude/skills/skill-scout/skill-scout.local.md` with their chosen values:
 
 ```markdown
 ---
-refresh_interval: 5
+refresh_interval_sessions: 5
+refresh_interval_days: 7
 sessions_since_refresh: 0
 last_refresh: YYYY-MM-DD
 ---
 ```
 
-4. Confirm: "Skill Scout is configured. I'll prompt for a database refresh every [N] sessions."
+4. Confirm: "Skill Scout is configured. I'll prompt for a database refresh every [N] sessions or every [N] days, whichever comes first."
 
 Then continue with the normal workflow.
 
@@ -205,13 +208,14 @@ Each time Skill Scout activates in a session, update the config file:
 ### When to Prompt for a Refresh
 
 Check the config file values. Prompt for a refresh when ANY of these are true:
-- `sessions_since_refresh` >= `refresh_interval`
+- `sessions_since_refresh` >= `refresh_interval_sessions`
+- Today's date minus `last_refresh` >= `refresh_interval_days`
 - The user is starting a new project type they haven't worked on before
 - A search against the local database yields no results for a common task
 - The user asks about database freshness
 
 **How to prompt:**
-> "The Skill Scout reference database was last updated on [last_refresh date]. You've used Skill Scout [N] times since the last refresh (interval set to [refresh_interval]). Want me to run a web search to check for new plugins, skills, or MCP servers?"
+> "The Skill Scout reference database was last updated on [last_refresh date] ([N] days ago). You've used Skill Scout [N] times since then. Want me to run a web search to check for new plugins, skills, or MCP servers?"
 
 ### After a Refresh
 
@@ -228,7 +232,7 @@ Update the config file:
 
 ### Changing the Refresh Interval
 
-If the user asks to change how often the refresh prompt appears, update the `refresh_interval` value in `~/.claude/skills/skill-scout/skill-scout.local.md`.
+If the user asks to change how often the refresh prompt appears, update `refresh_interval_sessions` and/or `refresh_interval_days` in `~/.claude/skills/skill-scout/skill-scout.local.md`.
 
 For the full refresh workflow (search queries, formatting rules, where to add entries), see `references/refresh-protocol.md`.
 
